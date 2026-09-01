@@ -1,0 +1,220 @@
+0.9.2
+-----
+- Fixed jq 1.6 compatibility in build_report_model.sh by replacing reserved binder names used by the descriptive report model.
+- Added a reporting-suite source guard for known jq 1.6 reserved binders so newer local jq versions cannot mask this regression class.
+- No collector evidence, collector schema, host-map schema, evaluator policy, replay ladder, or passive timing semantics changed.
+
+v0.9.1
+- Added run_complete.sh as the end-to-end default workflow: full tests, one fresh run_all capture, one harmonization pass, all text reports, all interactive HTML reports, and passive performance reports.
+- Added reports-only `run_complete.sh --from-run DIR` and optional `--skip-tests` while keeping fresh collection as the default.
+- Added passive per-collector `collector-timings.tsv` and run-phase `run-timings.tsv` to run_all.sh; no additional benchmark or hardware probe is started.
+- Added workflow-timings.tsv plus performance.txt, performance.json and self-contained interactive performance.html.
+- Reused one host-map across the complete report-generation workflow instead of repeatedly harmonizing the same run.
+- Added run_complete_test.sh and strengthened run_all_test.sh timing-artifact coverage.
+- Collector schema remains 0.5.0; host-map schema remains 0.8.9; report/evaluation schemas remain 0.1.0.
+
+v0.9.0
+- Added verdict-free short, dense-summary and dense terminal reports for the complete host.
+- Added latency/stutter/jitter/smoothness-only descriptive desktop reports at the same three densities.
+- Added self-contained interactive HTML for all-views replay, every descriptive report mode, and desktop evaluation.
+- Added Layer 3 desktop evaluator schema 0.1.0 with PASS/WARN/FAIL/UNKNOWN, severity, confidence, evidence, rationale and recommendation.
+- Evaluator consumes host-map only; missing evidence becomes UNKNOWN and measurement gaps remain explicit.
+- Added reporting_test.sh with descriptive/evaluative separation, no-live-probe boundary and all HTML modes.
+- Collector schema remains 0.5.0; host-map schema remains 0.8.9.
+
+Host Inventory for Proxmox version history
+===========================================
+
+0.8.14
+- Kept collector envelope schema 0.5.0 and host-map schema 0.8.9.
+- Added saved-run discovery: bare `view_all.sh --from-run` and explicit `--list-runs` enumerate visible host-inventory-* captures newest first without probing the host.
+- Discovery reports collector-count completeness against the current 38-view replay contract and labels incomplete captures rather than silently selecting one.
+- Added view-suite coverage for replay-ready and incomplete discovery behavior.
+- Recorded the v0.8.13 real-host umbrella validation as clean: 1,457 validations across the ten suites, 361 seconds total, return code 0.
+
+0.8.13
+- Kept collector envelope schema 0.5.0 and host-map schema 0.8.9; kernel-event semantics are unchanged from the corrected v0.8.12 collector.
+- Synchronized view_kernel_events.sh with collect_kernel_events.sh so live standalone/view_all collection uses the same line-oriented normalized event model as run_all.sh.
+- Added a suite-wide collector/view embedded-domain parity guard across all 38 collector-backed views to prevent future implementation drift.
+- Strengthened the kernel-event saved-data view assertion to require normalized-event, deduplicated-observation and cross-source-duplicate fields.
+- Preserved the 38 -> 32 -> 26 -> 14 replay ladder and six opt-in measurement tools.
+
+0.8.12
+- Kept collector envelope schema 0.5.0 and host-map schema 0.8.9.
+- Fixed kernel-event line tokenization so dmesg/journal text is parsed as individual records instead of allowing a whole multi-line blob to become one event.
+- Fixed IOMMU fault matching so normal `IOMMU: Default domain type: Translated` initialization is not classified as a fault.
+- De-duplicated equivalent dmesg/journal records by boot-relative timestamp/message before semantic aggregation.
+- Added normalized repetitive-event grouping with bounded representative evidence, first/last current-boot monotonic occurrence times, entity counts and occurrence counts.
+- Added direct qemu.slice OOM VM correlation plus same-PID/nearby-event correlation for killed-process lines; retained current dm-* guest identity only as a low-confidence historical hint.
+- Split generic kernel WARNING severity from BUG/Oops/panic/fault errors and hardened corrected-vs-uncorrected AER severity handling.
+- Added deterministic mocked kernel-event semantic tests and strengthened live contracts so multi-line parent events cannot pass unnoticed.
+
+0.8.11
+- Kept collector envelope schema 0.5.0 and host-map schema 0.8.9; no observation or harmonization semantics were removed.
+- Made run_all_test.sh the authoritative live collector pass for the umbrella suite and reused its retained 38-domain fixture in replay-safe extended/depth/collector validations.
+- Preserved exhaustive direct-live collector/domain behavior when the focused tests are run standalone without HFIP_TEST_FIXTURE_DIR.
+- Suppressed redundant hardware re-probes for compact/summary/view contract checks in grouped testing while retaining schema, renderer, ANSI, interface, failure-path and domain-specific validations.
+- Added per-focused-suite and total elapsed-time reporting to test_all.sh via timings.tsv and report.txt.
+- Retained the 38 -> 32 -> 26 -> 14 replay ladder, six opt-in measurement tools and jq 1.6 compatibility requirements.
+
+0.8.10
+- Bumped the application/package version to 0.8.10 while retaining collector envelope schema 0.5.0 and host-map schema 0.8.9.
+- Hardened optional VM disk/network/hostpci jq lookups so absent tokens yield explicit null values and never delete parent entities through an empty stream.
+- Ensured topology-graph IRQ nodes include configured PCI MSI/MSI-X vectors even when a vector is absent from the point-in-time IRQ inventory.
+- Strengthened semantic regressions for absent optional VM tokens, deterministic configured-MSI graph integrity and host-independent bridge-to-physical-NIC correlation.
+- Retained the 38 -> 32 -> 26 -> 14 strict replay ladder and jq 1.6 compatibility requirements.
+
+0.8.9
+- Expanded normal read-only inventory from 32 to 38 collectors/views and bumped the host-map schema to 0.8.9.
+- Added cache/NUMA/resctrl QoS, CPU thermal/performance-limit/PMU/frequency-residency, IRQ architecture, memory-fragmentation/hugepage-feasibility, display-timing/EDID/VRR and security-mitigation performance domains.
+- Added selected ACPI table decoding, semantic/deduplicated kernel-event normalization, upstream PCIe path plus ACS/ATS/PRI/PASID/TPH evidence, IOMMU group type/reserved-region evidence and already-active resctrl group/task/CPU assignments.
+- Added a referentially checked topology graph, capability/current-state matrix and path-aware evidence catalog with scope/confidence/stability/capture metadata.
+- Added descriptive `compare_hosts.sh` for cross-host comparison without policy verdicts.
+- Deepened VM correlations with disk/network/hostpci option parsing and VM -> TAP -> vhost -> bridge -> physical NIC/IRQ paths.
+- Added read-only ALSA PCM/substream state and normalized USB endpoint service-interval evidence.
+- Preserved explicit strict replay tiers for 38-domain current, 32-domain v0.8.7/v0.8.8, 26-domain v0.8.5/v0.8.6 and 14-domain historical captures.
+- Retained suite-wide jq 1.6 reserved external-variable guards and the six opt-in measurement programs.
+
+0.8.7
+- Expanded normal read-only inventory from 26 to 32 collectors/views.
+- Added kernel-event history, QEMU runtime scheduler/memory/cgroup detail, kernel housekeeping/IPI evidence, PM-QoS, desktop I/O-path evidence and a default five-second passive latency sample.
+- Added normalized passive per-CPU/softirq/IPI/block/network/QEMU/frequency/PSI/paging evidence without synthetic load.
+- Added USB endpoint intervals, autosuspend/wakeup/U1/U2 LPM and interactive network bridge/RFS/NAPI/tc/nft/XDP-capable link evidence.
+- Added `view_desktop_vm.sh`, a derived per-VM host-path report over host-map data.
+- Added six opt-in measurement programs for osnoise, timerlat, KVM exits, QEMU perf, irqsoff and hwlat; they are excluded from normal orchestration and have explicit safety gates.
+- Added `rtla` and `linux-perf` as optional preparation dependencies while retaining service-bearing tools as capability-only.
+- Bumped host-map schema to 0.8.7 and preserved explicit 32/26/14 collector compatibility tiers.
+- Expanded tests for all new domains, desktop-VM view, measurement gating and current/legacy harmonization.
+
+0.8.6
+- Fixed collect_virtualization_stack.sh and view_virtualization_stack.sh on jq 1.6 by replacing reserved jq variable `$module` with `$module_name`.
+- Kept collector envelope schema 0.5.0 and host-map schema 0.8.5; this is an application/runtime compatibility patch.
+- Hardened extended-domain and collector tests so empty JSON artifacts cannot satisfy jq contracts.
+- Added explicit jq 1.6 reserved-word compatibility checks for the virtualization collector/view.
+- Updated run-all, view, harmonizer and umbrella test versions for the compatibility regression.
+
+0.8.5
+- Expanded the observation suite to 26 collectors/views, including a dedicated KVM/QEMU/vhost/VFIO virtualization-stack domain.
+- Added deep observation domains for microcode/RAS, ACPI/firmware settings, passive IRQ/softirq and runtime-pressure sampling, advanced PCIe, storage health/power, advanced network, USB/input/audio, memory hardware and timers/watchdogs.
+- Integrated every new domain into run_all.sh, view_all.sh and host-map schema 0.8.5 while retaining legacy 14-collector replay compatibility.
+- Added a dedicated extended-domain regression group and updated collector, view, preparation, orchestration, harmonizer and umbrella tests for the 26-domain suite.
+
+0.8.4
+- Hardened optional joins so absent runtime/PCI/IRQ/storage matches never delete parent entities.
+- Restored full configured guest inventory in the host map and added independent configured/running QEMU/LXC counts.
+- Added cgroup-v2 file-presence evidence for controllers, type, cpuset and cpu.weight/cpu.max interfaces.
+- Distinguished cgroup states: not-exposed, empty/inherited, value and unknown for older captures.
+- Added status-only QEMU preservation alongside existing status-only LXC records.
+- Bumped host-map schema to 0.8.4 while retaining collector envelope schema 0.5.0.
+- Expanded harmonizer regressions for stopped guests, orphan PCI/IRQ joins and cgroup presence semantics.
+
+0.8.3
+- Corrected vhost discovery by deriving vhost threads from each QEMU task set.
+- Added distinct vhost and io-uring-worker QEMU thread roles.
+- Added raw-versus-online-effective CPU affinity normalization for QEMU and LXC runtime.
+- Added QEMU and running-LXC cgroup-v2 cpuset/cpu.weight/cpu.max observations.
+- Added LXC runtime capability evidence and backward-compatible unavailable states.
+- Bumped host-map schema to 0.8.3 while retaining collector envelope schema 0.5.0.
+- Fixed run_all_test persistent version metadata to use one test-version variable.
+- Extended harmonizer semantic tests for vhost, io_uring, cgroup controls and online CPU intersections.
+
+0.8.2
+- Added PCI sysfs `msi_irqs` vector inventory while retaining `/proc/interrupts` as point-in-time IRQ evidence.
+- Added resolved block-device sysfs ancestry and non-NVMe block -> PCI controller correlation.
+- Added LXC configuration collection and normalization.
+- Added point-in-time QEMU process/vCPU/IOThread/helper/vhost CPU-affinity collection.
+- Made QEMU config parsing snapshot-section safe; snapshot values cannot override active config.
+- Distinguished configured versus running VM/LXC bridge attachments and runtime TAP/veth presence.
+- Added per-collector timestamp/error/schema provenance and live-ephemeral source provenance.
+- Bumped host-map schema to 0.8.2 while retaining collector envelope schema 0.5.0.
+- Expanded harmonization regression coverage to 35 validations.
+
+0.8.1
+- view_harmonized_host.sh now defaults to live collection when neither --file nor --from-run is supplied.
+- Live mode invokes sibling run_all.sh into private temporary state, harmonizes it, renders the view, then cleans it up.
+- Live collection/progress is redirected to stderr so stdout contains only the harmonized report.
+- Added --skip-prepare for live harmonized view orchestration.
+- harmonize_host.sh and view_harmonized_host.sh resolve common test wrappers containing inventory/ or fixture/.
+- Extended harmonization tests for no-argument live orchestration, clean stdout, and wrapper-directory resolution.
+
+0.8.0
+- Added `harmonize_host.sh` for strict cross-collector host-map generation.
+- Added `--allow-partial` with explicit missing-collector limitations instead of guesses.
+- Added host-map schema 0.8.0 while preserving collector envelope schema 0.5.0.
+- Correlates CPU topology/isolation/workqueues with effective IRQ placement.
+- Correlates PCI BDF, driver, IOMMU group and negotiated link state.
+- Maps MSI/MSI-X IRQs directly to PCI BDFs when `/proc/interrupts` exposes the BDF descriptor, and joins effective CPU affinity.
+- Correlates NVMe -> block device -> PCI -> IRQ -> Proxmox storage backing.
+- Correlates physical NIC -> PCI -> IRQ -> Linux bridge -> QEMU VM NIC.
+- Normalizes QEMU CPU/memory/firmware/hostpci/disk/network configuration.
+- Added `view_harmonized_host.sh` for a colorized cross-domain descriptive view.
+- Added `test/harmonize_host_test.sh` and included it in `test/test_all.sh`.
+- Added `doc/host-map-schema.md`.
+
+0.7.1
+- Refined real-host view ergonomics without changing collector JSON schema.
+- Grouped repetitive storage, workqueue, IRQ and virtual-network presentation.
+- Added actual thermal sensor/fan/voltage values and Proxmox runtime grouping.
+- Clarified CPU present/possible/online topology and CPU0 fixed-online state.
+- Added dedicated-view `--quiet` mode and removed repeated child status chatter from `view_all.sh`.
+- Strengthened view tests with aspect-specific ergonomic assertions.
+
+0.7.0
+- Added fourteen dedicated standalone `view_*.sh` programs.
+- Each view script contains its own collection, dependency, JSON, color, and rendering implementation rather than wrapping the collector.
+- Dedicated view scripts default to the live human-readable view.
+- Added `--file FILE` for saved collector JSON and `--json` for raw collection output.
+- Added `view_all.sh` for live all-aspect presentation and replay of a previous run_all output directory.
+- Added `test/view_scripts_test.sh` with isolated single-file view checks and view_all replay validation.
+
+0.6.0
+- Added one dedicated `print_*_view` function for every collector.
+- Added `--view` and `--view-file FILE` to every standalone collector.
+- Existing `--summary` and `--summary-file FILE` remain backward-compatible aliases of the ergonomic view renderers.
+- Added collector tests for live `--view` and `--view-file` rendering.
+
+0.5.4
+- Fixed run_all_test.sh stage denominator using `rat_total_stages=11`.
+- run_all.sh filters routine collector title/progress lines from captured stderr logs.
+- Added diagnostic-log cleanliness validation.
+
+0.5.3
+- Fixed run_all_test.sh persistent-log variable collision and literal wildcard diagnostic filenames.
+- Fixed absent PCI driver/IOMMU sysfs symlink representation.
+- Fixed IRQ summary empty-field alignment.
+- Added real-data PCIe/IRQ sanity checks.
+
+0.5.2
+- Fixed CPU power/idle summary jq compatibility discovered on the real Proxmox host.
+- CPU policy and IRQ ordering became numeric.
+- Fixed virtual-network empty-field summary alignment.
+- run_all.sh captures per-collector and per-summary diagnostics and rejects broken summaries.
+
+0.5.1
+- Made tests narrate each validation stage.
+- Test artifacts became persistent under `test/results/`.
+- Added grouped `test_all.sh` result directories and reports.
+- Production collector envelope schema remained 0.5.0.
+
+0.5.0
+- Renamed project to Host Inventory for Proxmox.
+- Added `print_*_summary` functions and summary modes.
+- run_all.sh writes individual summaries, `inventory.json`, `manifest.json`, and combined `summary.txt`.
+
+0.4.0
+- Renamed numbered collectors to descriptive `collect_*.sh` names.
+- Added `prepare_host.sh` for suite-wide dependency preparation.
+- Added `run_all.sh` as the supported all-collector command.
+- Added `inventory.json` and `manifest.json`.
+
+0.3.0
+- Made each collector standalone.
+- Added per-collector dependency detection and optional APT installation.
+- Added semantic ANSI color.
+
+0.2.0
+- Reworked collectors around the supplied scripting style guide.
+- Converted collectors to POSIX shell.
+
+0.1.0
+- Initial inventory collector prototype.
